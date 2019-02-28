@@ -145,6 +145,14 @@ def main2():
     #        v.write(line)
 
     f = open(file_name, "r")
+    f2 = open(input_file, "w")
+    f3 = open(output_file, "r")
+
+    for line in f3:
+        f2.write(line)
+
+    f2.close()
+    f3.close()
 
     f.readline()
 
@@ -159,18 +167,71 @@ def main2():
 
         tags[i] = content[2:1+nb]
 
-    tag_len = [0] * 80000
+    count = 0
 
-    max_len = 0
+    f2 = open(input_file, "r")
+
+    f2.readline()
+
+    sol = [0] * 80000
 
     for i in range(80000):
-        len_now = len(tags[i])
-        tag_len[i] = len_now
+        sol[i] = int(f2.readline())
 
-        if len_now > max_len:
-            max_len = len_now
+    score = 0
 
-    
+    for i in range(1, 80000):
+        score += interest_tags(tags[sol[i-1]],tags[sol[i]])
+
+    highest_score = score
+
+    while(count < 1):
+
+        attempts = 0
+        idx = range(1, len(sol)-1)
+
+        while(attempts < 2000000):
+            i1, i2 = random.sample(idx, 2)
+
+            new_score = score
+            new_score -= interest_tags(tags[sol[i1-1]],tags[sol[i1]])
+            new_score -= interest_tags(tags[sol[i1]],tags[sol[i1+1]])
+            new_score -= interest_tags(tags[sol[i2-1]],tags[sol[i2]])
+            new_score -= interest_tags(tags[sol[i2]],tags[sol[i2+1]])
+
+            sol[i1], sol[i2] = sol[i2], sol[i1]
+
+            new_score += interest_tags(tags[sol[i1-1]],tags[sol[i1]])
+            new_score += interest_tags(tags[sol[i1]],tags[sol[i1+1]])
+            new_score += interest_tags(tags[sol[i2-1]],tags[sol[i2]])
+            new_score += interest_tags(tags[sol[i2]],tags[sol[i2+1]])
+
+            if(new_score <= score):
+                sol[i1], sol[i2] = sol[i2], sol[i1]
+            else:
+                print("Score increased by swap: " + str(new_score))
+                score = new_score
+
+            attempts += 1
+
+        #print("The score of this random set is: " + str(score))
+
+        if score > highest_score:
+            out = open(output_file, "w")
+            out.write("80000" + "\n")
+
+            for nb in sol:
+
+                out.write(str(nb) + "\n")
+
+            highest_score = score
+
+            print("New highscore: " + str(highest_score))
+
+        count += 1
+
+    print("Finished!")
+
 def lfsr(seed):
 
     for i in range(1,taps):
