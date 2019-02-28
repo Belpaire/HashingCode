@@ -85,7 +85,7 @@ def main():
         attempts = 0
         idx = range(1, len(sol)-1)
 
-        while(attempts < 1000000):
+        while(attempts < 2000000):
             i1, i2 = random.sample(idx, 2)
 
             new_score = score
@@ -158,6 +158,17 @@ def main2():
         nb = int(content[1])
 
         tags[i] = content[2:1+nb]
+
+    tag_len = [0] * 80000
+
+    max_len = 0
+
+    for i in range(80000):
+        len_now = len(tags[i])
+        tag_len[i] = len_now
+
+        if len_now > max_len:
+            max_len = len_now
 
     
 
