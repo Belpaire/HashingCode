@@ -6,7 +6,7 @@ file_name = "input/b_lovely_landscapes.txt"
 #file_h = "stef/d_pet_pictures_h.txt"
 
 input_file = "output/b_lovely_landscapes_sol_old.txt"
-output_file = "output/b_lovely_landscapes_sol.txt"
+output_file = "output/b_lovely_landscapes_sol_2.txt"
 
 def interest_tags(tags1,tags2):
     tagsSame=0
