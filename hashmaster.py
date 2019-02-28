@@ -37,7 +37,7 @@ def eval_tags(pic1, pic2):
 	return min(tagsSame,tags1diff,tags2diff)
 
 def get_next_greedy(prev, hor, ver, seed):
-	intout = 100
+	intout = 30
 
 	best_hor_int = -1	# score
 	best_hor_nb = -1	# idx in list
@@ -90,7 +90,7 @@ def output(slideshow):
 	print(slideshow)
 
 def main():
-	fname = "d_pet_pictures"
+	fname = "e_shiny_selfies"
 	data = parse('./input/%s.txt' % fname)
 	hor = [x for x in data if x.ishorizontal]
 	ver = [x for x in data if not x.ishorizontal]
