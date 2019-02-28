@@ -171,7 +171,29 @@ def main2():
             max_len = len_now
 
     
+def lfsr(seed):
 
+    for i in range(1,taps):
+        feedback_bit = seed[2] ^ seed[16]
+
+        if feedback_bit == 1:
+            feedback_bit = 0
+        else:
+            feedback_bit = 1
+
+        for j in range(0, 17):
+            seed[j] = seed[j+1]
+
+        seed[16] = feedback_bit
+
+        seed_string = ""
+
+        #for j in seed:
+        #    seed_string += str(j)
+
+    seed_string = ''.join([str(j) for j in seed])
+
+    return (int(seed_string, 2), seed)
 
 if __name__ == '__main__':
     main()
