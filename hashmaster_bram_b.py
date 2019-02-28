@@ -37,7 +37,7 @@ def makelist(data):
     picturelist=sorted(data, key = lambda x: random.random() )[0:500]
     max_score_this_iteration=0
     nextSlide=0
-    f  = open("solution", "w")
+    f  = open("output/solution.txt", "w")
     score_found=False
     try :
         while len(picturelist)>3:
@@ -56,7 +56,7 @@ def makelist(data):
             max_score_this_iteration=0
             score_found=False
 
-        f.write(str(picturelist[0].id))
+        f.write(str(picturelist[0].id)+"\n")
         f.close()
     except:
         print (nextSlide,len(picturelist))
