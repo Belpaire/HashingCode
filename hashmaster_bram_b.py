@@ -1,5 +1,5 @@
 from picture import Picture
-
+import random
 def parse(filename):
 	pics = []
 	with open(filename) as fp:  
@@ -34,23 +34,33 @@ def interest_tags(tags1,tags2):
 
 
 def makelist(data):
-    picturelist=data
+    picturelist=sorted(data, key = lambda x: random.random() )[0:500]
     max_score_this_iteration=0
     nextSlide=0
     f  = open("solution", "w")
-    while len(picturelist)>1:
-        for x in range(len(picturelist[1:])):
-            calc_score=interest_tags(picturelist[0].tags,picturelist[1:][x].tags)
-            if max_score_this_iteration< calc_score:
-                    max_score_this_iteration =calc_score
-                    print (max_score_this_iteration)
-                    nextSlide=x
+    score_found=False
+    try :
+        while len(picturelist)>3:
+            for x in range(len(picturelist[1:])):
+                calc_score=interest_tags(picturelist[0].tags,picturelist[1:][x].tags)
+                if max_score_this_iteration< calc_score:
+                        score_found=True
+                        max_score_this_iteration =calc_score
+                        nextSlide=x
+
+            f.write(str(picturelist[0].id)+"\n")
+            del picturelist[0]
+            if(not score_found):
+                nextSlide=len(picturelist)-2
+            picturelist[0],picturelist[nextSlide]=picturelist[nextSlide],picturelist[0]
+            max_score_this_iteration=0
+            score_found=False
 
         f.write(str(picturelist[0].id))
-        del picturelist[0]
-        picturelist[0]=picturelist[nextSlide]
-        max_score_this_iteration=0
-
+        f.close()
+    except:
+        print (nextSlide,len(picturelist))
+        f.close()
 def main():
    data = parse('./input/b_lovely_landscapes.txt')
    makelist(data)
