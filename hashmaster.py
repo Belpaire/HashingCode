@@ -72,8 +72,9 @@ def output(slideshow):
 
 def main():
 	fname = "c_memorable_moments"
-	hor = parse('./stef/%s_h.txt' % (fname))
-	ver = parse('./stef/%s_v.txt' % (fname))
+	data = parse('./input/%s.txt' % fname)
+	hor = [x for x in data if x.ishorizontal]
+	ver = [x for x in data if not x.ishorizontal]
 	oname = './output/%s_sol.txt' % (fname)
 	
 	ss = []
