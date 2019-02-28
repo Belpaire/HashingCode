@@ -1,5 +1,6 @@
 from picture import Picture
 import random
+import threading
 def parse(filename):
 	pics = []
 	with open(filename) as fp:  
@@ -32,12 +33,22 @@ def interest_tags(tags1,tags2):
     return min(tagsSame,tags1diff,tags2diff)
 
 
+class myThread (threading.Thread):
+   def __init__(self,  data,int):
+      threading.Thread.__init__(self)
+      self.data = data
+      self.nb=int
+   def run(self):
+      print ("Starting " + str(self.nb))
+      makelist(self.data,self.nb)
 
-def makelist(data):
-    picturelist=sorted(data, key = lambda x: random.random() )[0:10000]
+
+
+def makelist(data,nb):
+    picturelist= sorted(data, key= lambda x: x.nbtags)
     max_score_this_iteration=0
     nextSlide=0
-    f  = open("output/solution.txt", "w")
+    f  = open("output/solutionb"+str(nb)+".txt", "w")
     score_found=False
     try :
         while len(picturelist)>3:
@@ -61,8 +72,28 @@ def makelist(data):
         print (nextSlide,len(picturelist))
         f.close()
 def main():
-   data = parse('./input/b_lovely_landscapes.txt')
-   makelist(data)
+    data = parse('./input/b_lovely_landscapes.txt')
+    newlist=sorted(data, key = lambda x: random.random() )
+    for i in range(40):
+        newthread=myThread(data[2000*(i-1):2000*i],i)
+        newthread.start()
 
 if __name__ == '__main__':
     main()
+
+
+class VerticalSlide:
+     def __init__(self,pic1,pic2):
+         self.pic1=pic1
+         self.pic2=pic2
+
+def convertTagsToSparseMatrix(list_pictures):
+    for pic in list_pictures:
+        for  tag in pic:
+            if tag not in dictionarytags.keys():
+                dictionarytags[tag]=[pic.id]
+            else:
+                dictionarytags[tag].append(pic.id)
+    dictionaryidtotag=dict()
+    for pic in list_pictures:
+        dictionaryidtotag[pic.id]=pic.tags
