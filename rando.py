@@ -5,6 +5,7 @@ file_name = "input/b_lovely_landscapes.txt"
 #file_v = "stef/d_pet_pictures_v.txt"
 #file_h = "stef/d_pet_pictures_h.txt"
 
+input_file = "output/b_lovely_landscapes_sol_old.txt"
 output_file = "output/b_lovely_landscapes_sol.txt"
 
 def interest_tags(tags1,tags2):
@@ -39,6 +40,14 @@ def main():
     #        v.write(line)
 
     f = open(file_name, "r")
+    f2 = open(input_file, "w")
+    f3 = open(output_file, "r")
+
+    for line in f3:
+        f2.write(line)
+
+    f2.close()
+    f3.close()
 
     f.readline()
 
@@ -55,20 +64,50 @@ def main():
 
     count = 0
 
-    highest_score = 36
+    f2 = open(input_file, "r")
 
-    
+    f2.readline()
 
-    while(count < 0):
+    sol = [0] * 80000
 
-        sol = [i for i in range(80000)]
+    for i in range(80000):
+        sol[i] = int(f2.readline())
 
-        random.shuffle(sol)
+    score = 0
 
-        score = 0
+    for i in range(1, 80000):
+        score += interest_tags(tags[sol[i-1]],tags[sol[i]])
 
-        for i in range(1, 80000):
-            score += interest_tags(tags[sol[i-1]],tags[sol[i]])
+    highest_score = score
+
+    while(count < 1):
+
+        attempts = 0
+        idx = range(1, len(sol)-1)
+
+        while(attempts < 1000000):
+            i1, i2 = random.sample(idx, 2)
+
+            new_score = score
+            new_score -= interest_tags(tags[sol[i1-1]],tags[sol[i1]])
+            new_score -= interest_tags(tags[sol[i1]],tags[sol[i1+1]])
+            new_score -= interest_tags(tags[sol[i2-1]],tags[sol[i2]])
+            new_score -= interest_tags(tags[sol[i2]],tags[sol[i2+1]])
+
+            sol[i1], sol[i2] = sol[i2], sol[i1]
+
+            new_score += interest_tags(tags[sol[i1-1]],tags[sol[i1]])
+            new_score += interest_tags(tags[sol[i1]],tags[sol[i1+1]])
+            new_score += interest_tags(tags[sol[i2-1]],tags[sol[i2]])
+            new_score += interest_tags(tags[sol[i2]],tags[sol[i2+1]])
+
+            if(new_score <= score):
+                sol[i1], sol[i2] = sol[i2], sol[i1]
+            else:
+                print("Score increased by swap: " + str(new_score))
+                score = new_score
+
+            attempts += 1
 
         #print("The score of this random set is: " + str(score))
 
@@ -87,6 +126,40 @@ def main():
         count += 1
 
     print("Finished!")
+
+def main2():
+
+    #f = open(file_name, "r")
+    #v = open(file_v, "w")
+    #h = open(file_h, "w")
+
+    #nb = int(f.readline())
+
+    #for i in range(nb):
+    #    line = f.readline()
+    #    content = line.split()
+    #
+    #    if content[0] == "H":
+    #        h.write(line)
+    #    else:
+    #        v.write(line)
+
+    f = open(file_name, "r")
+
+    f.readline()
+
+    tags = [0] * 80000
+
+    for i in range(80000):
+
+        line = f.readline()
+        content = line.split()
+
+        nb = int(content[1])
+
+        tags[i] = content[2:1+nb]
+
+    
 
 
 if __name__ == '__main__':
