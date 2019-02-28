@@ -33,15 +33,24 @@ def eval_tags(pic1, pic2):
 		else:
 			tags1diff+=1
 	tags2diff=len(tags2copy)
-	return min([tagsSame,tags1diff,tags2diff])
+	#print(tagsSame,tags1diff,tags2diff)
+	return min(tagsSame,tags1diff,tags2diff)
 
-def get_next_greedy(prev, hor, ver):
-	best_hor_int = -1
-	best_hor_nb = -1
-	best_hor = None
-	for i in range(0, min(100, len(hor))):
-		sid = i # change with pseudorandom int
-		shor = hor[i]
+def get_next_greedy(prev, hor, ver, seed):
+	intout = 100
+
+	best_hor_int = -1	# score
+	best_hor_nb = -1	# idx in list
+	best_hor = None		# slide
+	for i in range(0, min(intout, len(hor))):
+		sid = randint(0, len(hor)-1)
+		#while sid < 0:
+		#	(sidt, seed) = lfsr(seed) # change with pseudorandom int
+		#	# print(sidt)
+		#	if sidt < len(hor):
+		#		sid = sidt
+
+		shor = hor[sid]
 		et = eval_tags(prev, shor)
 		# print(et)
 		if et > best_hor_int:
@@ -52,11 +61,21 @@ def get_next_greedy(prev, hor, ver):
 	best_ver_int = -1
 	best_ver_nb = (-1 -1)
 	best_ver = None
-	for i in range(0, min(100, (len(ver))*(len(ver)))):
-		sid = i
-		(x, y) = inv_cantor(sid)
-		if x == y or x >= len(ver) or y >= len(ver):
-			continue
+	for i in range(0, min(intout, (len(ver))*(len(ver)))):
+		if len(ver) < 2:
+			break
+
+		sid = -1
+		while sid < 0:
+			sidt = randint(0, (len(ver))*(len(ver)))
+			# (sidt, seed) = lfsr(seed) # change with pseudorandom int
+			(x, y) = inv_cantor(sidt)
+			if not(x == y or x >= len(ver) or y >= len(ver)):
+				sid = sidt
+		
+		if sid < 1:
+			break
+
 		sverp = ver[x].merge(ver[y])
 		et = eval_tags(prev, sverp)
 		if et > best_ver_int:
@@ -64,55 +83,70 @@ def get_next_greedy(prev, hor, ver):
 			best_ver_nb = (x, y)
 			best_ver = sverp
 	
-	return (best_hor, [best_hor_nb], best_hor_int) if best_hor_int >= best_ver_int else (best_ver, best_ver_nb, best_ver_int)
+	return (best_hor, [best_hor_nb], best_hor_int, seed) if best_hor_int >= best_ver_int else (best_ver, best_ver_nb, best_ver_int, seed)
 		
 
 def output(slideshow):
 	print(slideshow)
 
 def main():
-	fname = "c_memorable_moments"
+	fname = "d_pet_pictures"
 	data = parse('./input/%s.txt' % fname)
 	hor = [x for x in data if x.ishorizontal]
 	ver = [x for x in data if not x.ishorizontal]
 	oname = './output/%s_sol.txt' % (fname)
 	
-	ss = []
+	# ss = []
 	previd = randint(0, len(hor)-1)
 	prev = hor[previd]
 	del hor[previd]
-	ss.append(previd)
+	# ss.append(previd)
 	
-	f = open(oname,"w")
-
+	
+	seed = [0]*17
 	score = 0
 	cnt = 0
 	print("%i: %i -- %s" % (0, score, prev.tags))
+
+	
+	f = open(oname,"w")
+	f.write("%s\n" % -1)
+	f.close()	
+
 	while True:
-		(slide, ids, sc) = get_next_greedy(prev, hor, ver)
+		(slide, ids, sc, seed) = get_next_greedy(prev, hor, ver, seed)
 		next = slide
 		if next is None:
 			break
+
+		# print(prev)
+		# print(next)
+		# print(sc)
 		
 		score = score + sc
 		if len(ids) == 1:
 			del hor[ids[0]]
-			ss.append(ids[0])	
-			f.write("%s\n" % slide.id)
+			# ss.append(ids[0])	
 		else:
+			print("%s %i" % (ids, len(ver)))
 			del ver[ids[0]]
-			del ver[ids[1]]
-			ss.append(ids)
-			f.write("%s\n" % slide.id)
+
+			if ids[1] > ids[0]:
+				del ver[ids[1]-1]
+			else:
+				del ver[ids[1]]
+			# ss.append(ids)
+		f = open(oname,"a")
+		f.write("%s\n" % slide.id)
+		f.close()
 		
 		cnt += 1
-		if cnt > 100:
+		if cnt > len(data)+1:
 			break
 
-		print("%i: %i" % (cnt, score))
+		print("%i: %i -- %s" % (cnt, score, next))
 		prev = next
 		
-	f.close()
 	# print(ss)
 	print(score)
 

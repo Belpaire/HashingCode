@@ -17,9 +17,10 @@ class Picture:
 		id = "%s %s" % (self.id, other.id)
 		tags = self.tags
 		tags.extend(x for x in other.tags if x not in tags)
-		tags = tags
 		nbtags = len(tags)
 		ishorizontal = True
+
+		assert len(tags) == len(set(tags))
 
 		return Picture(id, ishorizontal, nbtags, tags)
 
