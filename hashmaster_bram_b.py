@@ -34,7 +34,7 @@ def interest_tags(tags1,tags2):
 
 
 def makelist(data):
-    picturelist=sorted(data, key = lambda x: random.random() )[0:500]
+    picturelist=sorted(data, key = lambda x: random.random() )[0:10000]
     max_score_this_iteration=0
     nextSlide=0
     f  = open("output/solution.txt", "w")
@@ -55,7 +55,6 @@ def makelist(data):
             picturelist[0],picturelist[nextSlide]=picturelist[nextSlide],picturelist[0]
             max_score_this_iteration=0
             score_found=False
-
         f.write(str(picturelist[0].id)+"\n")
         f.close()
     except:
